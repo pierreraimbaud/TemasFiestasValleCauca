@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+
+    <style>
+
+      .toolTip {
+        position: absolute;
+        display: none;
+        min-width: 80px;
+        height: auto;
+        background: none repeat scroll 0 0 #ffffff;
+        border: 1px solid #6F257F;
+        padding: 14px;
+        text-align: center;
+      }
+
+      h1 {
+        font-size : 150%;
+        color:#696969;
+        text-align: center;
+      }
+
+      h2 {
+        font-size : 110%;
+        color:#489450;
+      }
+
+      .xaxis text {
+        color:#676779;
+      }
+
+      .yaxis text {
+        color:#676779;
+      }
+
+      #svgcontainer {
+        display: inline-block;
+      }
+
+      #explcontainer {
+        display: inline-block;
+      }
+
+
+rect.cell {
+  fill: none;
+  stroke: #ddd;
+  stroke-width: 2px;
+}
+
+.links line {
+  stroke: #999;
+  stroke-opacity: 0.7;
+}
+
+.nodes circle {
+  fill: #d62333;
+  stroke: #fff;
+  stroke-width: 2px;
+}
+    </style>
+    
+    <h1>You want to benefit from a training from the Colombian government about Open Data ? </br>But when are these trainings mostly given? When not?</h1>
+
+    <div id="wrapper">
+
+      <div id = "svgcontainer">
+            <h2>Dataset</h2>
+            <div>
+              <p style="color:#789410;font-size:85%">Data are processed to consider the fact that at the moment where we got the data, the months of october, november and december of 2018 are missing. </br>As a result, we normalised the data between the years 2016 and 2017 (complete) and 2018 (uncomplete).</p>
+              <button id = "swToYearButton" style="padding: 5px 10px; text-align: center;font-size: 80%;margin: 2px 1px;">Switch to year</button>
+              <button id = "swToMonthButton" disabled style="padding: 5px 10px; text-align: center;font-size: 80%;margin: 2px 1px;">Switch to month</button>
+            </div>
+      </div>
+
+       <div id = "explcontainer">
+            <h2>What, why and how ? Understanding this visualization thanks to abstraction</h2>
+              <p style="color:#111111;">
+                This visualization uses data from datos.gov.co The principal objective here is to show or discover some interesting insights about this data, knowing that the principal question here is:<br/><b>Could I know, thanks to the visualization, when should I book my time for applying to a training about open data ? When not? </b>
+                <br/><br/>
+                The other objetives are more academic: to use d3, to publish the web page on GithubPages etc. The technologies used are d3 (javascript), HTML, CSS and git (nodejs for developing with a local server). There is no specific prerequisites for enjoying the visualization neither for using the code, available in github.
+                <br/><br/>
+                To be more precise, in the following paragraphs first we will explain what were our data (through data abstraction), why this visualization (through task abstraction) and to conclude the reason of how we choice to present the data (idioms : visual encoding and interaction) ; thanks to that, we have been able to answer to the title question : <i>when should I book my time, when not, for these trainings</i>, which answers are our insights !
+                <br/>
+              </p>
+              <p style="color:#789410;font-size:110%">What ?</p>
+              <p style="color:#111111;">
+                The dataset type is <b>temporal</b> (initially, we could have thought that it was a table, but the fact is that, originally, almost all the dataset are tables, but, seaching with more precision, we can discover interesting details. For this case, the dataset is temporal because it provides a list of open data usage trainings, characterising them by their name, their objectives, their geografic range AND <b>their date</b> (we could admit that some would say - and they would be right - that this dataset could be used for other purposes which don't need the temporal data, and as a result the dataset would not be temporal). </br>The dataset availability is <b>static</b> because the dataset available on the website is not modified in real-time, so we just download the file from the website and load it on github. As the dataset was quite up-to-date (only missing the last weeks), it is probable that the data could evolve in the original website but here we will use a static data file, the one on github. After that, to separate the dataset in smaller ones, and also to get <b>derived data</b> (rate in % of training by month and by year), we process directly this file in the visualization with d3.<br/><br/>
+
+                Before processing the data in d3, the <b>items</b> represent each one a training, which have the following characteristics: name, description, audience, date, zone, number of people present and duration. These characteristics are the <b>attributes</b>.<br/><br/>
+
+                The <b>attributes</b> name, description, audience and zone are categorical. Besides, we won't use them. The attributes number of people present and duration are ordered and quantitative (because of being number quantities) and sequential (there is no separation between two groups so no diverging). We won't use them neither. About the attribute date, we can consider that originally it is ordered and quantitative and sequential because it is composed of a complete date (year, month, day, hours and minutes).<br/><br/>
+
+                After processing the data, we obtain <b>new items</b>: each item is a month - the months represent cyclic data here because we used them over several years and grouped them together - for the years, there are all separated (or a year, for the other derivation). About the attribute, we have new attributes: for one derivation the monthRate (the promedian rate (in %) of trainings, for a month, considering the three years) and for the other one the yearRate (the rate (in %) of trainings, for a year). Both monthRate and yearRate are ordered and quantitative and sequential attributes, because of being number quantities (%) with no separation between two groups so no diverging.<br/><br/>
+            </p>
+            <p style="color:#789410;font-size:110%">Why ?</p>
+            <p style="color:#111111;">
+              Before talking about the wanted tasks, we have to mention that we did two derivation tasks. We process the data and transform the items which were representing one training into new items. Now each item is a month (or a year, for the other dataset where we performed the other derivation). For the items Month the attribute is the promedian rate (in %) of trainings, for a month, considering the three years given in the original data. For the items Year the attribute is the rate (in %) of trainings, for a year. These derivation tasks, in terms of Tamara were <b>Derive (action) Feature (target) (from trainings to temporal data)</b>.<br/><br/>
+
+              Which tasks do we want to be able to perform here ? <br/><br/>
+
+              As said in the title, first, the primary task we want to perform here is <b>to show how much are given these trainings during a year (month by month).</b>
+              In terms of Tamara, at a high-level, the action is <b>Present</b> and the target is <b>Distribution</b> : we want to show to the audience a summary month by month of the rate of trainings which have been given. To be more precise, at a low-level that the action is <b>Summarize</b> and the target is <b>Distribution</b>. For this behaviour we use only the dataset <i>rate under total (in %) by month</i>.
+              <br/><br/>
+              But, also as said in the title, another primary task would be <b>to show when are mostly given these trainings during a year (month by month) and when not.</b>
+              In terms of Tamara, at a high-level, the action is <b>Discover</b> and the target is <b>Extremes</b> : we want to allow the audience to know when they should book time for going to these trainings. To be more precise, at a low-level that the action is <b>Locate</b> and the target is <b>Extremes</b>.
+              They are <b>our two first insights : you should book time for going to these trainings in April or September. But on the contrary we should definitely not plan to assist to this kind of training in January or December.</b> For this behaviour we use only the dataset <i>rate under total (in %) by month</i>.
+              <br/><br/>
+
+              One secondary task is to check if we are "on-time" for these capacitations. By saying that, we mean that, even if this initiative of organising trainings about open data usage is quite recent (since 2016) maybe we have missed the right moment or maybe not! In terms of Tamara, at a high-level, this task is <b>Discover (action) Trends (target)</b> and at a low-level that the action is <b>Identify</b> and the target is <b>Trends</b>. We can perform this task by using the interaction "Switch to year". Then we can perform this task (so using only the dataset <i>rate under total (in %) by year</i>.)
+              <br/><br/>
+              As a result, <b>our third insight : the global trend over years is a huge decrease of the number of training given about this subject. Most of them (almost 60%) have been given in 2016. So it seems that we missed the right moment!</b>
+              <br/><br/>
+            </p>
+            <p style="color:#789410;font-size:110%">How ?</p>
+            <p style="color:#111111;">
+              We choose <b>line chart</b> for this visualization.<br/><br/>
+              First, we have to say that for the two datasets, in the x axis, we have the considered time (month, or year). Both are ordered and quantitative. Month is cyclic whereas year is sequential. In the y axis we have the rate in % of training by month (promedian rate) or by year. Both are ordered, quantitative and sequential.<br/><br/>
+              As a result, about the visual encoding, the <b>mark</b> we choose is <b>line</b> which represents the rate in % of training over the time (months or years) and the <b>channel</b> is <b>vertical position</b> because the attribute rate is ordered quantitative; it can be easily explain because this channel is the most <b>effective</b> for the ordered attributes (which should always use magnitude channels, in theory, so from this point of view, we use a good and expressive type).</p>
+              Note that we use a second mark which are the <b>points</b>, for each exact value we had, to emphasise them and allow to get more details. 
+              <br/>About the view for secondary task where we used the same marks and channels because the items and the attributes shared the same characteristics than the one of the first view/main task.
+              </br></br>
+              As in y axis we have the rate of training which is quantitative ordered sequential, in both views, we choose to <b>express</b> the vertical position - it combines well with ordered attributes and with our principal tasks (summarize distribution, locate extremes) and secondary task (identify trends). And as in x axis we have the considered time period which is quantitative ordered, in both views, we choose to <b>express</b> also the position.
+              <br/><br/>
+              Then about the interaction, first we decide to provide to the user two interactions with two buttons. Both buttons allow to switch between the two views, which permit to perform the main or the secondary tasks (and to get back!). It’s a <b>Change manipulation</b>. Then, we used a <b>Superimpose</b> putting the points we have on the lines. And, to conclude, with these points we also provide a <b>“Select” manipulation</b>, with a mouseover which allows to give more detailed information about the current point.</p>
+            </p>            
+      </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+<script>
+
+height = 1000;
+width=1500;
+var dat
+  d3.json("./data3.json").then(function(data) {
+          dat = data;
+          console.log(dat);
+          //Create chart
+          createGraph();
+      });
+
+function color (nodes){
+  const scale = d3.scaleOrdinal(d3.schemeCategory10);
+  return nodes => scale(nodes.group);
+}
+
+function drag (simulation){ 
+  
+  function dragstarted(d) {
+    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+  }
+  
+  function dragged(d) {
+    d.fx = d3.event.x;
+    d.fy = d3.event.y;
+  }
+  
+  function dragended(d) {
+    if (!d3.event.active) simulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
+  }
+  
+  return d3.drag()
+      .on("start", dragstarted)
+      .on("drag", dragged)
+      .on("end", dragended);
+}
+
+
+function forceSimulation(nodes, links) {
+  return d3.forceSimulation(nodes)
+      .force("link", d3.forceLink(links).id(d => d.id))
+      .force("charge", d3.forceManyBody())
+      .force("center", d3.forceCenter());
+};
+
+
+function createGraph(){
+
+  const links = dat.links.map(d => Object.create(d));
+  const nodes = dat.nodes.map(d => Object.create(d));
+  const simulation = forceSimulation(nodes, links).on("tick", ticked);
+
+  const svg = d3.select("#svgcontainer")
+          .append("svg")
+   .attr('width', width)
+   .attr('height', height)
+      .attr("viewBox", [-width / 2, -height / 2, width, height]);
+
+  const link = svg.append("g")
+      .attr("stroke", "#999")
+      .attr("stroke-opacity", 0.6)
+    .selectAll("line")
+    .data(links)
+    .enter().append("line")
+      .attr("stroke-width", d => Math.sqrt(d.value));
+
+  const node = svg.append("g")
+      .attr("stroke", "#fff")
+      .attr("stroke-width", 1.5)
+    .selectAll("circle")
+    .data(nodes)
+    .enter().append("circle")
+      .attr("r", 5)
+      .attr("fill", color(nodes))
+      .call(drag(simulation));
+
+  node.append("title")
+      .text(d => d.id);
+
+  function ticked() {
+    link
+        .attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
+    
+    node
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y);
+  }
+
+  //return svg.node();
+}
+// var width = 600;
+// var height = 300;
+// var nodeRadius = d3.scaleSqrt().range([4, 10]);
+// var linkWidth = d3.scaleLinear().range([1, 2 * nodeRadius.range()[0]]);
+
+// var drag = d3.drag()
+//   .on('start', dragStart)
+//   .on('drag', dragging)
+//   .on('end', dragEnd);
+
+// var svg = d3.select('svg')
+//   .attr('width', width + 2)
+//   .attr('height', height + 2)
+//   .style("fill", "#6332E2")
+//   .append('g')
+//   .attr('transform', 'translate(1,1)');
+
+// var groupingForce = forceInABox()
+//   .strength(0.1)
+//   .template('treemap')
+//   .groupBy('community')
+//   .size([width, height]);
+
+// var forceSim = d3.forceSimulation()
+//   .force('link', d3.forceLink()
+//     .id(function(d) { return d.id; })
+//     .distance(50)
+//     .strength(groupingForce.getLinkStrength)
+//   )
+//   .force('group', groupingForce)
+//   .force('charge', d3.forceManyBody())
+//   .force('center', d3.forceCenter(width/2, height/2))
+//   .force('x', d3.forceX(width/2).strength(0.02))
+//   .force('y', d3.forceY(height/2).strength(0.04));
+
+// d3.json('jean.json').then(function (graph) {
+
+//   //if (error) throw error;
+
+//   // Make sure small nodes are drawn on top of larger nodes
+//   graph.nodes.sort(function (a, b) { return b.chapters.length - a.chapters.length; });
+
+//   nodeRadius.domain([graph.nodes[graph.nodes.length-1].chapters.length, graph.nodes[0].chapters.length]);
+
+//   linkWidth.domain(d3.extent(graph.links, function (d) { return d.chapters.length; }));
+
+//   forceSim.nodes(graph.nodes)
+//     .on('tick', tick);
+
+//   forceSim.force('link')
+//     .links(graph.links);
+
+//   groupingForce.links(graph.links)
+//     .drawTreemap(svg);
+
+//   var link = svg.append('g')
+//     .attr('class', 'links')
+//     .selectAll('line')
+//     .data(graph.links)
+//     .enter().append('line')
+//     .attr('stroke-width', function (d) { return linkWidth(d.chapters.length); });
+
+//   var node = svg.append('g')
+//     .attr('class', 'nodes')
+//     .selectAll('circle')
+//     .data(graph.nodes)
+//     .enter().append('circle')
+//     .attr('r', function (d) { return nodeRadius(d.chapters.length); })
+//     .call(drag);
+
+//   node.append('title').text(function (d) { return d.name; });
+
+//   function tick () {
+//     link
+//       .attr('x1', function (d) { return d.source.x; })
+//       .attr('x2', function (d) { return d.target.x; })
+//       .attr('y1', function (d) { return d.source.y; })
+//       .attr('y2', function (d) { return d.target.y; });
+
+//     node
+//       .attr('cx', function (d) { return d.x; })
+//       .attr('cy', function (d) { return d.y; });
+//   }
+// });
+
+// function dragStart (d) {
+//   if (!d3.event.active) forceSim.alphaTarget(0.3).restart();
+//   d.fx = d.x;
+//   d.fy = d.y;
+// }
+
+// function dragging (d) {
+//   d.fx = d3.event.x;
+//   d.fy = d3.event.y;
+// }
+
+// function dragEnd (d) {
+//   if (!d3.event.active) forceSim.alphaTarget(0);
+//   d.fx = null;
+//   d.fy = null;
+// }
+
+</script>
+    <!-- <script>
+
+      // Const margin data for viz
+      const width = 850;
+      const height = 450;
+      const margin = {top: 5, right: 70, bottom: 50, left: 50};
+      const iwidth = width - margin.left -margin.right;
+      const iheight = height - margin.top - margin.bottom;
+      // Const ray for line chart
+      const circleRay = 4;
+      //Const for date formats
+      const timeFormatYear = "%Y";
+      const timeFormatMonth = "%Y-%m";
+      const timeMonthLetter = d3.timeFormat("%b");
+      const timeYearLetter =d3.timeFormat(timeFormatYear);
+      //Const for date parsing
+      const parseTimeYear = d3.timeParse(timeFormatYear);
+      const parseTimeMonth = d3.timeParse(timeFormatMonth);
+
+      // Original data var
+      var dataOrigin;
+      // Dataset 1,2
+      var dataMonth1, dataYear1;
+      //Var for axis x and y
+      var xDomain, yDomain, xaxis, yaxis, x, y;
+
+      // SVG and g elements
+      var svg = d3.select("#svgcontainer")
+          .append("svg")
+          .attr("width", iwidth + margin.left + margin.right)
+          .attr("height", iheight + margin.top + margin.bottom);
+      var g = svg.append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      //Tooltip var
+      var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+
+      // Load csv with promise and then create chart
+      d3.csv('https://raw.githubusercontent.com/pierreraimbaud/CapacitacionesColombia/master/Calendario_de_Capacitaciones__Iniciativa_Datos_Abiertos.csv').then(function(data) {
+          dataOrigin = data;
+          //Create chart
+          //createBar();
+      });
+
+      // //button to swap to the other dataset
+      // d3.select("#swToYearButton").on("click",function(){
+      //     updateLineChartToYear();
+      // });//end click function
+
+      // //button to swap to the other dataset (get back)
+      // d3.select("#swToMonthButton").on("click",function(){
+      //     updateLineChartToMonth();
+      // });//end click function
+
+      // //Create chart
+      // function createBar(){
+
+      //   //Set dataset title
+      //   d3.select("h2").text("Dataset about capacitation quantity (rate under total, in %) by month (normalised promedian of the 3 years)");
+
+      //   //Data preparation (2 datasets)
+      //   prepareDatasets();        
+
+      //   //Create axis
+      //   addAxisForChart();
+
+      //   //Create line chart (line)
+      //   addLineForMonth();
+
+      //   //Create points on line chart (circle - superimpose)
+      //   addPointsForMonth();
+      // }
+
+      // //Prepare datasets for chart
+      // function prepareDatasets(){
+
+      //   //Nest data for getting it as wanted
+      //   var dataYear = d3.nest()
+      //     .key(function(d){
+      //       return d.Year;
+      //     })
+      //     .rollup(function(values) { return values.length; })
+      //     .entries(dataOrigin);
+        
+      //   dataYear.sort(function(x, y){
+      //     return d3.ascending(+x.key, +y.key);
+      //   });
+
+      //   // Normalise the results because the years 2016 and 2017 are complete whereas that in 2018 we don't have october; november; december
+      //   var totalYear=0;
+      //   for (i = 0; i < dataYear.length; i++) { 
+      //     switch(dataYear[i].key) {
+      //       case "2016":
+      //       case "2017":
+      //           dataYear[i].value=dataYear[i].value/12;
+      //           break;
+      //       case "2018":
+      //           dataYear[i].value=dataYear[i].value/9;
+      //           break;
+      //     }
+      //   }
+      //   for (i = 0; i < dataYear.length; i++) { 
+      //     totalYear+=dataYear[i].value;
+      //   }
+      //   for (i = 0; i < dataYear.length; i++) {
+      //     dataYear[i].value=(dataYear[i].value/totalYear*100).toFixed(2);
+      //   }
+
+      //   dataYear1=dataYear;
+      //   //format the data for time scale
+      //   dataYear1.forEach(function(d) {
+      //     d.key = parseTimeYear(+d.key);
+      //   });
+        
+      //   //Nest data for getting it as wanted
+      //   var dataMonth = d3.nest()
+      //     .key(function(d){
+      //       return +d.Month;
+      //     })
+      //     .rollup(function(values) { return values.length; })
+      //     .entries(dataOrigin);
+        
+      //   dataMonth.sort(function(x, y){
+      //     return d3.ascending(+x.key, +y.key);
+      //   });
+
+      //   // Normalise the results all the months appear 3 times except october; november; december
+      //   var total=0;
+      //   for (i = 0; i < dataMonth.length; i++) { 
+      //     switch(dataMonth[i].key) {
+      //       case "01":
+      //       case "02":
+      //       case "03":
+      //       case "04":
+      //       case "05":
+      //       case "06":
+      //       case "07":
+      //       case "08":
+      //       case "09":
+      //           dataMonth[i].value=dataMonth[i].value/3;
+      //           break;
+      //       case "10":
+      //       case "11":
+      //       case "12":
+      //           dataMonth[i].value=dataMonth[i].value/2;
+      //           break;
+      //     }
+      //   }
+      //   for (i = 0; i < dataMonth.length; i++) { 
+      //     total+=dataMonth[i].value;
+      //     dataMonth[i].dateFacticeYear = "2010-"+dataMonth[i].key;
+      //   }
+      //   for (i = 0; i < dataMonth.length; i++) {
+      //     dataMonth[i].value=(dataMonth[i].value/total*100).toFixed(2);
+      //   }
+      //   dataMonth1=dataMonth;
+      //   // format the data for time scale
+      //   dataMonth1.forEach(function(d) {
+      //     d.dateFacticeYear = parseTimeMonth(d.dateFacticeYear);
+      //   });
+      // }
+
+      // //First creation methods
+
+      // //Add the axis on chart
+      // function addAxisForChart(){
+
+      //   // X scale definition
+      //   x = d3.scaleTime().range([0, iwidth]);
+      //   xDomain=d3.extent(dataMonth1, function(d) { return d.dateFacticeYear;});
+      //   x.domain(xDomain);
+
+      //   // Y scale definition
+      //   y = d3.scaleLinear().rangeRound([iheight, 0]);
+      //   var max = d3.max(dataMonth1, function(d){
+      //     return +d.value});
+      //   yDomain=[0,max];
+      //   y.domain(yDomain);
+
+      //   // Axis x
+      //   xaxis = g.append('g').attr('class', 'xaxis')
+      //       .call(d3.axisBottom(x).ticks(d3.timeMonth, 1)
+      //         .tickFormat(timeMonthLetter))
+      //       .attr("transform", `translate(0,${iheight})`)
+      //       .attr("class", "xaxis");
+
+      //   // Axis y  
+      //   yaxis = g.append('g').attr('class', 'yaxis')
+      //       .call(d3.axisLeft(y));
+      // }
+
+      // //Add the line on chart
+      // function addLineForMonth(){
+
+      //   // Add the line which join the points
+      //   var line = d3.line()
+      //     .x( d=> x(d.dateFacticeYear))
+      //     .y( d=> y(d.value));
+          
+      //   // Path element
+      //   g.append("path")
+      //     .attr("class", "line")
+      //     .attr("d", line(dataMonth1))
+      //     .style("stroke", "#408000")
+      //     .attr("stroke-width", 2.5)
+      //     .style("fill", "none");
+      // }
+
+      // //Add the points on the line on chart
+      // function addPointsForMonth(){
+
+      //   var circ = svg.selectAll('circle')
+      //       .data(dataMonth1)
+      //       .enter()
+      //       .append('circle')
+      //       .style("fill", "#6332E2")
+
+      //   var attrX = 
+      //     circ.attr("r", circleRay)
+      //         .attr("cx", function(d) { return x(d.dateFacticeYear) + margin.left; })
+      //         .attr("cy", function(d) { return y(d.value)+circleRay});
+
+      //   circ.on("mousemove", function(d){
+      //         tooltip
+      //           .style("left", d3.event.pageX - 70 + "px")
+      //           .style("top", d3.event.pageY - 90 + "px")
+      //           .style("display", "inline-block")
+      //           .html(timeMonthLetter(d.dateFacticeYear) + " - " + d.value + " %");
+      //       })
+      //       .on("mouseout", function(d){ tooltip.style("display", "none");})
+      // }
+
+      // //Update methods
+
+      // //Update the axis for years on chart
+      // function updateAxisForYear(){
+
+      //   //Update x and y axis
+
+      //   //1 - rejoin data
+      //   xaxis = g.selectAll(".xaxis");
+        
+      //   //2 - Remove axis
+      //   xaxis.exit().remove();//remove unneeded axis
+
+      //   var yaxis = g.selectAll(".yaxis");
+          
+      //   xaxis.exit().remove();//remove unneeded axis
+
+      //   //3 - Update axis
+      //   xaxis.enter().append("xaxis")
+      //     .attr("class", "xaxis");
+
+      //   yaxis.enter().append("yaxis")
+      //     .attr("class", "yaxis");
+
+      //   // X scale definition
+ 
+      //   x = d3.scaleTime().range([0, iwidth]);
+      //   xDomain=d3.extent(dataYear1, function(d) { return d.key; });
+      //   x.domain(xDomain);
+
+      //   // Y scale definition
+      //   y = d3.scaleLinear().rangeRound([iheight, 0]);
+      //   var max = d3.max(dataYear1, function(d){
+      //     return +d.value});
+      //   yDomain=[0,max];
+      //   y.domain(yDomain);
+
+      //   // Axis x
+      //   xaxis = xaxis.attr('class', 'xaxis')
+      //       .call(d3.axisBottom(x).ticks(d3.timeYear, 1)
+      //         .tickFormat(timeYearLetter))
+      //       .attr("transform", `translate(0,${iheight})`)
+      //       .attr("class", "xaxis");
+
+      //   // Axis y  
+      //   yaxis = yaxis.attr('class', 'yaxis')
+      //       .call(d3.axisLeft(y));
+      // }
+
+      // //Update the line for years on chart
+      // function updateLineForYear(){
+
+      //   //Update line
+      //   //1 - rejoin data
+      //   var line = g.selectAll(".line");        
+      //   //2 - Remove line
+      //   line.exit().remove();//remove unneeded lines
+      //   //3 - Update line
+      //   line.enter().append("path")
+      //     .attr("class", "line");
+
+      //   // Add the line which join the points
+      //   var linef = d3.line()
+      //     .x( d=> x(d.key))
+      //     .y( d=> y(d.value));
+          
+      //   // Path element
+      //   line.attr("d", linef(dataYear1))
+      //     .style("stroke", "#ff6600")
+      //     .attr("stroke-width", 2.5)
+      //     .style("fill", "none");
+      // }
+
+      // //Update the points for years on chart
+      // function updatePointsForYear(){
+
+      //   //Update points
+      //   //1 - rejoin data
+      //   var circ = svg.selectAll('circle').data(dataYear1);
+      //   //2 - Remove points
+      //   circ.exit().remove();//remove unneeded points
+      //   //3 - Update points
+      //   circ.enter().append("circle");
+
+      //   circ.attr("r", circleRay);
+      //   circ.attr("cx", function(d) { return x(d.key) + margin.left; });
+      //   circ.attr("cy", function(d) { return y(d.value)+circleRay});
+      //   circ.on("mousemove", function(d){
+      //         tooltip
+      //           .style("left", d3.event.pageX - 70 + "px")
+      //           .style("top", d3.event.pageY - 90 + "px")
+      //           .style("display", "inline-block")
+      //           .html(timeYearLetter(d.key) + " - " + d.value + " %");
+      //       })
+      //       .on("mouseout", function(d){ tooltip.style("display", "none");})        
+      // }
+
+      // //Update the chart for years      
+      // function updateLineChartToYear(){
+      //   updateAxisForYear();
+      //   updateLineForYear();
+      //   updatePointsForYear();
+      //   d3.select("#swToYearButton").attr("disabled", true);
+      //   d3.select("#swToMonthButton").attr("disabled", null);
+      //   //Change text
+      //   d3.select("h2").text("Dataset about capacitation quantity (rate under total, in %) by year");
+      // }
+
+      // //update the axis for months on chart
+      // function updateAxisForMonth(){
+
+      //   //Update x and y axis
+
+      //   //1 - rejoin data
+      //   xaxis = g.selectAll(".xaxis");
+        
+      //   //2 - Remove axis
+      //   xaxis.exit().remove();//remove unneeded axis
+
+      //   var yaxis = g.selectAll(".yaxis");
+          
+      //   xaxis.exit().remove();//remove unneeded axis
+
+      //   //3 - Update axis
+      //   xaxis.enter().append("xaxis")
+      //     .attr("class", "xaxis");
+
+      //   yaxis.enter().append("yaxis")
+      //     .attr("class", "yaxis");
+
+      //   // X scale definition
+
+      //   x = d3.scaleTime().range([0, iwidth]);
+      //   xDomain=d3.extent(dataMonth1, function(d) { return d.dateFacticeYear; });
+      //   x.domain(xDomain);
+
+      //   // Y scale definition
+      //   y = d3.scaleLinear().rangeRound([iheight, 0]);
+      //   var max = d3.max(dataMonth1, function(d){
+      //     return +d.value});
+      //   yDomain=[0,max];
+      //   y.domain(yDomain);
+
+      //   // Axis x
+      //   xaxis = xaxis.attr('class', 'xaxis')
+      //       .call(d3.axisBottom(x).ticks(d3.timeMonth, 1)
+      //         .tickFormat(d3.timeFormat("%b")))
+      //       .attr("transform", `translate(0,${iheight})`)
+      //       .attr("class", "xaxis");
+
+      //   // Axis y  
+      //   yaxis = yaxis.attr('class', 'yaxis')
+      //       .call(d3.axisLeft(y));
+      // }
+
+      // //Update the line for months on chart
+      // function updateLineForMonth(){
+
+      //   //Update line
+      //   //1 - rejoin data
+      //   var line = g.selectAll(".line");        
+      //   //2 - Remove line
+      //   line.exit().remove();//remove unneeded lines
+      //   //3 - Update line
+      //   line.enter().append("path")
+      //     .attr("class", "line");
+
+      //   // Add the line which join the points
+      //   var linef = d3.line()
+      //     .x( d=> x(d.dateFacticeYear))
+      //     .y( d=> y(d.value));
+          
+      //   // Path element
+      //   line.attr("d", linef(dataMonth1))
+      //     .style("stroke", "#408000")
+      //     .attr("stroke-width", 2.5)
+      //     .style("fill", "none");
+      // }
+
+      // //Update the points for months on chart
+      // function updatePointsForMonth(){
+
+      //   //Update points
+      //   //1 - rejoin data
+      //   var circ = svg.selectAll('circle').data(dataMonth1);
+      //   //2 - Remove points
+      //   circ.exit().remove();//remove unneeded points
+
+      //   //3 - Update points
+      //   circ.enter().append("circle");
+
+      //   circ.attr("r", circleRay);
+      //   circ.attr("cx", function(d) { return x(d.dateFacticeYear) + margin.left; });
+      //   circ.attr("cy", function(d) { return y(d.value)+circleRay});
+
+      //   //But as the number of circle is different between the two lines, we only update 3 points
+
+      //   //Then we have to create the other points
+      //   var circ = svg.selectAll('circle2')
+      //     .data(dataMonth1)
+      //     .enter()
+      //     .append('circle')
+      //     .style("fill", "#6332E2");
+      //   circ.attr("r", circleRay);
+      //   circ.attr("cx", function(d) { return x(d.dateFacticeYear) + margin.left; });
+      //   circ.attr("cy", function(d) { return y(d.value)+circleRay});
+      //   circ.on("mousemove", function(d){
+      //         tooltip
+      //           .style("left", d3.event.pageX - 70 + "px")
+      //           .style("top", d3.event.pageY - 90 + "px")
+      //           .style("display", "inline-block")
+      //           .html(timeMonthLetter(d.dateFacticeYear) + " - " + d.value + " %");
+      //       })
+      //       .on("mouseout", function(d){ tooltip.style("display", "none");})
+      // }
+      
+      // //Update the chart for months
+      // function updateLineChartToMonth(){
+      //   updateAxisForMonth();
+      //   updateLineForMonth();
+      //   updatePointsForMonth();
+      //   d3.select("#swToMonthButton").attr("disabled", true);
+      //   d3.select("#swToYearButton").attr("disabled", null);
+      //   //Change text  
+      //   d3.select("h2").text("Dataset about capacitation quantity (rate under total, in %) by month");
+      // }
+
+    </script>
+ -->
+    
+    <div class="wrapper">
+      <header>
+        <p><a href="">Link of this page - for sharing for example</a></p>
+      </header>
+      <section>
+        <p style="font-size:90%">The data used come from the Colombian open data website - direct link <a href="https://www.datos.gov.co/api/views/nmxb-8juf/rows.csv?accessType=DOWNLOAD&bom=true&format=true">here</a></p>
+        <p style="font-size:90%">This project is under <a href="https://opensource.org/licenses/MIT">MIT license.</a></p>
+        <p class="view"><a href="https://github.com/pierreraimbaud/CapacitacionesColombia">Project URL on GitHub <small>pierreraimbaud/CapacitacionesColombia</small></a>   -   <a style="font-size:90%" href="https://github.com/pierreraimbaud/CapacitacionesColombia#markdown">Markdown link</a></p>        
+      </section>
+      <footer>
+        <p>Link to the author GitHub profile: this project is maintained by <a href="https://github.com/pierreraimbaud">pierreraimbaud</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src=""></script>
+    
+  </body>
+</html>
