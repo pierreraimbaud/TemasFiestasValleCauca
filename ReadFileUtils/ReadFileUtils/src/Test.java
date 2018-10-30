@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -76,6 +75,42 @@ public class Test {
 		return readMapResult(mapWord1,min);
 	}
 
+	public static Map<String, List<Integer>> filterMapResult(Map<String, List<Integer>> map, int min) {
+		int i =0;
+		Map<String, List<Integer>> mapNew = new ConcurrentHashMap<String, List<Integer>>();
+		List<String> values = new ArrayList<>(map.keySet());
+		while(i <map.size()) {
+			if (map.get(values.get(i)).get(0) >=min){
+				mapNew.put(values.get(i) , map.get(values.get(i)));
+			}
+			i++;
+		}
+		return mapNew;
+	}
+
+	public static Map<String, List<Integer>> readMapResult(Map<String, List<Integer>> mapOld, int min) {
+
+		Map<String, List<Integer>> map = filterMapResult(mapOld, min);
+		List<String> values = new ArrayList<>(map.keySet());
+
+		Collections.sort(values, new Comparator<String>() {
+			public int compare(String a, String b) {
+				// no need to worry about nulls as we know a and b are both in map
+				return map.get(b).get(0) - map.get(a).get(0);
+			}
+		});
+		String val = "";//"There are "+ map.size()+ " words which repeat themselves in the file";
+		//txt+=val+"\n";
+		int i =0;
+		while(i <map.size()) {
+			val = values.get(i) + "," + map.get(values.get(i))+"\n";
+			txt+=val;
+			i++;
+		}
+		//txt+= (char)12;
+		return map;
+	}
+
 	public static Consumer<String> getConsumerWord1(Map<String, List<Integer>> map) {
 		Consumer<String> c = (x) ->{
 			String[] splitStr = x.trim().split("\\s+");
@@ -100,7 +135,9 @@ public class Test {
 					else {
 						value = map.get(splitStr[i].toLowerCase()).get(0)+1;
 						map.get(splitStr[i].toLowerCase()).set(0,value);
-						map.get(splitStr[i].toLowerCase()).add(lineId);
+						if (!map.get(splitStr[i].toLowerCase()).contains(lineId)){
+							map.get(splitStr[i].toLowerCase()).add(lineId);
+						}									
 						map.put(splitStr[i].toLowerCase(), map.get(splitStr[i].toLowerCase()));
 					}
 
@@ -115,40 +152,6 @@ public class Test {
 		return c;
 	}
 
-	public static Map<String, List<Integer>> filterMapResult(Map<String, List<Integer>> map, int min) {
-		int i =0;
-		Map<String, List<Integer>> mapNew = new ConcurrentHashMap<String, List<Integer>>();
-		List<String> values = new ArrayList<>(map.keySet());
-		while(i <map.size()) {
-			if (map.get(values.get(i)).get(0) >=min){
-				mapNew.put(values.get(i) , map.get(values.get(i)));
-			}
-			i++;
-		}
-		return mapNew;
-	}
-	public static Map<String, List<Integer>> readMapResult(Map<String, List<Integer>> mapOld, int min) {
-
-		Map<String, List<Integer>> map = filterMapResult(mapOld, min);
-		List<String> values = new ArrayList<>(map.keySet());
-
-		Collections.sort(values, new Comparator<String>() {
-			public int compare(String a, String b) {
-				// no need to worry about nulls as we know a and b are both in map
-				return map.get(b).get(0) - map.get(a).get(0);
-			}
-		});
-		String val = "";//"There are "+ map.size()+ " words which repeat themselves in the file";
-		//txt+=val+"\n";
-		int i =0;
-		while(i <map.size()) {
-			val = values.get(i) + "," + map.get(values.get(i))+"\n";
-			txt+=val;
-			i++;
-		}
-		//txt+= (char)12;
-		return map;
-	}
 	public static Consumer<String> getConsumerWord2(Map<String, List<Integer>> map, Map<String, List<Integer>> map1Word) {
 		Consumer<String> c = (x) ->{
 			String[] splitStr = x.trim().split("\\s+");
@@ -178,7 +181,10 @@ public class Test {
 								else {
 									value = map.get(twoWords).get(0)+1;
 									map.get(twoWords).set(0,value);
-									map.get(twoWords).add(lineId);
+									//quit repetitions here for simplification
+									if (!map.get(twoWords).contains(lineId)){
+										map.get(twoWords).add(lineId);
+									}
 									map.put(twoWords, map.get(twoWords));
 								}
 							}
@@ -220,7 +226,9 @@ public class Test {
 								else {
 									value = map.get(threeWords).get(0)+1;
 									map.get(threeWords).set(0,value);
-									map.get(threeWords).add(lineId);
+									if (!map.get(threeWords).contains(lineId)){
+										map.get(threeWords).add(lineId);
+									}									
 									map.put(threeWords, map.get(threeWords));
 								}
 							}
@@ -261,7 +269,9 @@ public class Test {
 								else {
 									value = map.get(threeWords).get(0)+1;
 									map.get(threeWords).set(0,value);
-									map.get(threeWords).add(lineId);
+									if (!map.get(threeWords).contains(lineId)){
+										map.get(threeWords).add(lineId);
+									}									
 									map.put(threeWords, map.get(threeWords));
 								}
 							}
@@ -289,7 +299,7 @@ public class Test {
 		readMapResult(map, min);
 	}
 
-
+	@SuppressWarnings("deprecation")
 	public static void createJsonFile(String destJsonFilePath, String text) {
 		BufferedWriter writer;
 		try {
@@ -301,67 +311,6 @@ public class Test {
 			e.printStackTrace();
 			Logger.global.log(Level.SEVERE, e.getMessage(), e.getCause());
 		}
-	}
-
-	@SuppressWarnings("deprecation")
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		String csvPath = "./src/Fest_Cauca.csv";
-		String filePath = "./src/file.txt";
-		String destFilePath = "./src/results.txt";
-		String destJsonFilePath = "./src/data.json";
-		String destJsonFilePath2 = "./src/data2.json";
-
-		generalUselessWords.addAll(specificUselessWords);
-		Map<String, List<Integer>> map1 =buildHashMapWords(filePath, 10);
-		Map<String, List<Integer>> map2 = new ConcurrentHashMap<String, List<Integer>>();
-		resultByNum(map2, map1,getConsumerWord2(map2,map1), 3);
-
-		//Map<String, List<Integer>> map3 = new ConcurrentHashMap<String, List<Integer>>();
-		//Map<String, List<Integer>> map4 = new ConcurrentHashMap<String, List<Integer>>();
-		//resultByNum(map3, map1,getConsumerWord3(map3,map1), 3);
-		//resultByNum(map4, map1,getConsumerWord4(map4,map1), 3);
-
-		BufferedWriter writer;
-		try {
-			writer = new BufferedWriter( new FileWriter( destFilePath));
-			writer.write( txt);
-			writer.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Logger.global.log(Level.SEVERE, e.getMessage(), e.getCause());
-		}
-		readCSV(csvPath);
-		System.out.println(mapNode.size());
-		int i =0;
-		List<Integer> values = new ArrayList<>(mapNode.keySet());
-		while(i <mapNode.size()) {
-			System.out.println(values.get(i));
-			i++;
-		}
-		List<String> nodeLines = createNodeLinesForJson(mapNode);
-		List<String> clusterLines =createClusterNodesLines();
-		List<String> linkLines = createLinkLinesForJson(mapNode, clusterNames);
-		groupNodeLines(nodeLines,false);
-		groupNodeLines(clusterLines,true);
-		text+="\n\t],\n\t\"links\": [\n";
-		groupNodeLines(linkLines,true);
-		text+="\n\t]\n}";
-		createJsonFile(destJsonFilePath, text);
-
-
-		text="{\n\t\"nodes\": [\n";
-		List<String> nodeLines2 = createNodeLinesForJson(mapNode);
-		List<String> clusterLines2 =createClusterNodesDeepLines(txt);
-		List<String> deepLinkLines = createDeepLinkLinesForJson(mapNode, txt);
-
-		groupNodeLines(nodeLines2,false);
-		groupNodeLines(clusterLines2,true);
-		text+="\n\t],\n\t\"links\": [\n";
-		groupNodeLines(deepLinkLines,true);
-		text+="\n\t]\n}";
-		createJsonFile(destJsonFilePath2, text);
 	}
 
 	public static void groupNodeLines(List<String> nodeLines, boolean withoutLastCharacter) {
@@ -382,7 +331,7 @@ public class Test {
 		List<Integer> values = new ArrayList<>(mapN.keySet());
 		while(i <mapN.size()) {
 			Node n=mapN.get(values.get(i));
-			nodesLines.add("{\"id\": \""+n.getId()+"\", \"group\": \""+n.getGroup()+"\"}");
+			nodesLines.add("{\"id\": \""+n.getId()+"\", \"name\": \""+n.getName()+"\", \"group\": \""+n.getGroup().trim()+" \",\"main\": \""+"false\"}");
 			if(!clusterNames.contains(n.getGroup())) {
 				clusterNames.add(n.getGroup());
 			}
@@ -396,8 +345,71 @@ public class Test {
 		i=0;
 		List<String> nodesLines= new ArrayList<String>();
 		while(i <clusterNames.size()) {
-			nodesLines.add("{\"id\": \""+clusterNames.get(i)+"\", \"group\": \""+clusterNames.get(i)+"\"}");
+			nodesLines.add("{\"id\": \""+clusterNames.get(i)+"\", \"name\": \""+clusterNames.get(i)+"\", \"group\": \""+clusterNames.get(i).trim()+" \",\"main\": \""+"true\"}");
 			i++;
+		}
+		return nodesLines;
+	}
+
+	private static List<List<String>> createReverseResultsList(Map<Integer, Node> mapN, String resultFromMining) {
+
+		List<Integer> values = new ArrayList<>(mapN.keySet());
+		List<List<String>> reverseResultsList= new ArrayList<List<String>>();
+
+		String[] lines = resultFromMining.trim().split("\n");
+
+		for (String line:lines) {
+			String[] lineValues = line.trim().split(",");
+			lineValues[1]=lineValues[1].substring(1);
+			lineValues[lineValues.length-1]=lineValues[lineValues.length-1].substring(0,lineValues[lineValues.length-1].length()-1);
+			String name =lineValues[0];
+			for (int j = 1; j < lineValues.length; j++) {
+				List<String> smallList= new ArrayList<String>();
+				smallList.add(lineValues[j].trim());
+				//smallList.add(mapN.get(values.get(Integer.parseInt(lineValues[j].trim()))).getId());
+				smallList.add(name);
+				List <String> el = containsElementInListOfList(mapN.get(Integer.parseInt(lineValues[j].trim())).getId(), 0, reverseResultsList);
+				if(null == el){
+					reverseResultsList.add(smallList);
+				}
+				else{
+					int pos =reverseResultsList.indexOf(el);
+					if(!reverseResultsList.get(pos).contains(name)){
+						reverseResultsList.get(pos).add(name);
+					}
+				}
+			}
+		}
+		return reverseResultsList;
+	}
+
+	private static List<String> containsElementInListOfList(String element, int index, List<List<String>> list){
+		for (int i = 0; i < list.size(); i++) {
+			if(element.equals(list.get(i).get(index))){
+				return list.get(i);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param mapN
+	 * @param reverseResultsList
+	 * @return
+	 */
+	private static List<String> createDeepNodeLinesForJson(Map<Integer, Node> mapN, List<List<String>> reverseResultsList) {
+		//{"id": "50", "group": "Artístico-Cultural"}
+		List<String> nodesLines= new ArrayList<String>();
+
+		List<Integer> values = new ArrayList<>(mapN.keySet());
+
+		for (List<String> line:reverseResultsList) {
+			String group="";
+			for(int i=1; i<line.size();i++) {
+				group+=line.get(i)+" ";
+			}
+			group=group.substring(0, group.length()-1);
+			nodesLines.add("{\"id\": \""+line.get(0)+"\", \"name\": \""+mapN.get(values.get(Integer.parseInt(line.get(0))-1)).getName()+"\", \"group\": \""+group.trim()+" \",\"main\": \""+"false\"}");
 		}
 		return nodesLines;
 	}
@@ -410,7 +422,7 @@ public class Test {
 		for (String line:lines) {
 			String name = line.trim().split(",")[0];
 
-			nodesLines.add("{\"id\": \""+name+"\", \"group\": \""+name+"\"}");
+			nodesLines.add("{\"id\": \""+name+"\", \"name\": \""+name+"\", \"group\": \""+name.trim()+" \",\"main\": \""+"true\"}");
 		}
 		return nodesLines;
 	}
@@ -419,7 +431,6 @@ public class Test {
 		//{"source": "Napoleon", "target": "Myriel", "value": 1},
 		List<String> linkLines= new ArrayList<String>();
 
-		List<Integer> values = new ArrayList<>(mapN.keySet());
 		String[] lines = clusterAndIDlist.trim().split("\n");
 
 		for (String line:lines) {
@@ -428,7 +439,7 @@ public class Test {
 			lineValues[lineValues.length-1]=lineValues[lineValues.length-1].substring(0,lineValues[lineValues.length-1].length()-1);
 			String name =lineValues[0];
 			for (int j = 1; j < lineValues.length; j++) {
-				linkLines.add("{\"source\": \""+mapN.get(values.get(Integer.parseInt(lineValues[j].trim()))).getId()+"\", \"target\": \""+name+"\", \"value\": \""+1+"\"}");
+				linkLines.add("{\"source\": \""+Integer.parseInt(lineValues[j].trim())+"\", \"target\": \""+name+"\", \"value\": \""+1+"\"}");
 			}
 		}
 		return linkLines;
@@ -454,5 +465,66 @@ public class Test {
 			i++;
 		}
 		return linkLines;
+	}
+
+	@SuppressWarnings("deprecation")
+	public static void main(String[] args) {
+
+		String csvPath = "./src/Fest_Cauca.csv";
+		String filePath = "./src/file.txt";
+		String destFilePath = "./src/results.txt";
+		String destJsonFilePath = "./src/data.json";
+		String destJsonFilePath2 = "./src/data2.json";
+
+		generalUselessWords.addAll(specificUselessWords);
+		Map<String, List<Integer>> map1 =buildHashMapWords(filePath, 10);
+		Map<String, List<Integer>> map2 = new ConcurrentHashMap<String, List<Integer>>();
+		resultByNum(map2, map1,getConsumerWord2(map2,map1), 3);
+
+		//Map<String, List<Integer>> map3 = new ConcurrentHashMap<String, List<Integer>>();
+		//Map<String, List<Integer>> map4 = new ConcurrentHashMap<String, List<Integer>>();
+		//resultByNum(map3, map1,getConsumerWord3(map3,map1), 3);
+		//resultByNum(map4, map1,getConsumerWord4(map4,map1), 3);
+
+		BufferedWriter writer;
+		try {
+			writer = new BufferedWriter( new FileWriter( destFilePath));
+			writer.write( txt);
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			Logger.global.log(Level.SEVERE, e.getMessage(), e.getCause());
+		}
+		readCSV(csvPath);
+		System.out.println(mapNode.size());
+		int i =0;
+		List<Integer> values = new ArrayList<>(mapNode.keySet());
+		while(i <mapNode.size()) {
+			System.out.println(values.get(i));
+			i++;
+		}
+		List<String> nodeLines = createNodeLinesForJson(mapNode);
+		List<String> clusterLines =createClusterNodesLines();
+		List<String> linkLines = createLinkLinesForJson(mapNode, clusterNames);
+		groupNodeLines(nodeLines,false);
+		groupNodeLines(clusterLines,true);
+		text+="\n\t],\n\t\"links\": [\n";
+		groupNodeLines(linkLines,true);
+		text+="\n\t]\n}";
+		createJsonFile(destJsonFilePath, text);
+
+
+		text="{\n\t\"nodes\": [\n";
+
+		List<String> nodeLines2 = createDeepNodeLinesForJson(mapNode, createReverseResultsList(mapNode, txt));
+		List<String> clusterLines2 =createClusterNodesDeepLines(txt);
+		List<String> deepLinkLines = createDeepLinkLinesForJson(mapNode, txt);
+
+		groupNodeLines(nodeLines2,false);
+		groupNodeLines(clusterLines2,true);
+		text+="\n\t],\n\t\"links\": [\n";
+		groupNodeLines(deepLinkLines,true);
+		text+="\n\t]\n}";
+		createJsonFile(destJsonFilePath2, text);
 	}
 }

@@ -1,38 +1,9 @@
-There are 21 words which repeat themselves in the file
-fiestas,20
-festival,13
-encuentro,7
-san,6
-patronales,4
-música,4
-nacional,3
-internacional,3
-cultural,3
-aniversarias,3
-señora,2
-corregimiento,2
-paz,2
-tradicionales,2
-cultura,2
-retorno,2
-danzas,2
-nuestra,2
-fiesta,2
-intérpretes,2
-concurso,2
-There are 5 words which repeat themselves in the file
-fiestas del retorno,2
-patronales del corregimiento,2
-fiestas de san,2
-corregimiento de san,2
-patronales de nuestra,2
-There are 4 words which repeat themselves in the file
-fiestas patronales,4
-fiestas aniversarias,3
-nuestra señora,2
-festival internacional,2
-There are 3 words which repeat themselves in the file
-fiestas patronales de nuestra,2
-fiestas patronales del corregimiento,2
-patronales de nuestra señora,2
-
+música,[22, 2, 4, 7, 10, 11, 16, 18, 23, 24, 27, 36, 37, 41, 43, 47, 48]
+cultural,[16, 2, 13, 18, 19, 20, 22, 27, 35, 43, 45, 46]
+san,[13, 29, 30, 21, 31, 36, 42, 47]
+cultura,[11, 18, 19, 23, 27, 40, 44, 48]
+danzas,[10, 4, 8, 10, 22, 26, 34, 41, 47, 49]
+música andina,[3, 16, 18]
+danzas tradicionales,[3, 8, 22, 34]
+san antonio,[3, 21]
+san pedro,[3, 36, 47]

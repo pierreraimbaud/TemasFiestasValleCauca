@@ -25,7 +25,7 @@
       }
 
       h1 {
-        font-size : 150%;
+        font-size : 130%;
         color:#696969;
         text-align: center;
       }
@@ -43,8 +43,14 @@
         color:#676779;
       }
 
-      #svgcontainer {
+      #svgcontainer1 {
         display: inline-block;
+        float: left;
+      }
+
+      #svgcontainer2 {
+        display: inline-block;
+        float: right;
       }
 
       #explcontainer {
@@ -70,17 +76,17 @@ rect.cell {
 }
     </style>
     
-    <h1>You want to benefit from a training from the Colombian government about Open Data ? </br>But when are these trainings mostly given? When not?</h1>
+    <h1>Title</h1>
 
     <div id="wrapper">
 
-      <div id = "svgcontainer">
-            <h2>Dataset</h2>
-            <div>
-              <p style="color:#789410;font-size:85%">Data are processed to consider the fact that at the moment where we got the data, the months of october, november and december of 2018 are missing. </br>As a result, we normalised the data between the years 2016 and 2017 (complete) and 2018 (uncomplete).</p>
-              <button id = "swToYearButton" style="padding: 5px 10px; text-align: center;font-size: 80%;margin: 2px 1px;">Switch to year</button>
-              <button id = "swToMonthButton" disabled style="padding: 5px 10px; text-align: center;font-size: 80%;margin: 2px 1px;">Switch to month</button>
-            </div>
+      <div id = "svgcontainer1">
+  <h2>Dataset</h2>
+            <p style="color:#789410;font-size:85%">text for details</p>
+            <div><button id = "swToYearButton" style="padding: 5px 10px; text-align: center;font-size: 80%;margin: 2px 1px;">Switch to year</button></div>
+      </div>
+
+      <div id = "svgcontainer2">
       </div>
 
        <div id = "explcontainer">
@@ -140,18 +146,27 @@ rect.cell {
     <script src="https://d3js.org/d3.v5.min.js"></script>
 <script>
 
-height = 1000;
-width=1500;
 var dat
-  d3.json("./data3.json").then(function(data) {
+  d3.json("./data.json").then(function(data) {
           dat = data;
           console.log(dat);
           //Create chart
-          createGraph();
+          createGraph(11.1,500,540);
       });
 
-function color (nodes){
-  const scale = d3.scaleOrdinal(d3.schemeCategory10);
+
+      //button to swap to the other dataset
+      d3.select("#swToYearButton").on("click",function(){
+        d3.json("./data2.json").then(function(data) {
+          dat = data;
+          console.log(dat);
+          //Create chart
+          createGraph(35,650,640);
+        });//end click function
+      });
+
+function color (nodes,collisionForceVal){
+  const scale = collisionForceVal>13 ? d3.scaleOrdinal(d3.schemePaired) : d3.scaleOrdinal(d3.schemeAccent);
   return nodes => scale(nodes.group);
 }
 
@@ -181,22 +196,28 @@ function drag (simulation){
 }
 
 
-function forceSimulation(nodes, links) {
-  return d3.forceSimulation(nodes)
+function forceSimulation(nodes, links,collisionForceVal) {
+  simu= d3.forceSimulation(nodes)
       .force("link", d3.forceLink(links).id(d => d.id))
-      .force("charge", d3.forceManyBody())
+      .force('collision', d3.forceCollide().radius(function(d) {
+    return collisionForceVal;
+  }))
       .force("center", d3.forceCenter());
+      collisionForceVal>13 ? simu.force("charge", d3.forceManyBody()) : simu;
+      
+
+      return simu;
 };
 
 
-function createGraph(){
+function createGraph(collisionForceVal, height, width){
 
   const links = dat.links.map(d => Object.create(d));
   const nodes = dat.nodes.map(d => Object.create(d));
-  const simulation = forceSimulation(nodes, links).on("tick", ticked);
+  const simulation = forceSimulation(nodes, links, collisionForceVal).on("tick", ticked);
 
-  const svg = d3.select("#svgcontainer")
-          .append("svg")
+  const svg = (collisionForceVal>13 ? d3.select("#svgcontainer2") :d3.select("#svgcontainer1")).append("div")
+    .append("svg")
    .attr('width', width)
    .attr('height', height)
       .attr("viewBox", [-width / 2, -height / 2, width, height]);
@@ -215,12 +236,29 @@ function createGraph(){
     .selectAll("circle")
     .data(nodes)
     .enter().append("circle")
-      .attr("r", 5)
-      .attr("fill", color(nodes))
+      .attr("r", d => d.main ==="false" ? 7 : 12)
+      .attr("fill", color(nodes,collisionForceVal))
       .call(drag(simulation));
 
+  const label = svg.selectAll("label")
+            .data(nodes)
+            .enter()
+            .append("text")
+              .text(function (d) { 
+                return collisionForceVal>13 ? 
+                d.group : 
+                (d.main ==="true" ? 
+                  d.group : ""); })
+              .style("fill", "#555")
+             // .style("text-anchor",d=>d.id ==="Artístico-Cultural" ? "start" : "end")
+              .style("font-weight", d=>d.main ==="true" ? "bold" : "normal")
+              .attr("x", d =>d.x)
+              .attr("y",d => d.y)
+              .style("font-family", "Arial")
+              .style("font-size", d=>d.main ==="true" ? 15: 10);
+
   node.append("title")
-      .text(d => d.id);
+      .text(d => d.main ==="true" ? d.group :(d.name));
 
   function ticked() {
     link
@@ -232,6 +270,10 @@ function createGraph(){
     node
         .attr("cx", d => d.x)
         .attr("cy", d => d.y);
+
+    label
+        .attr("x", d => d.x)
+        .attr("y", d => d.y);
   }
 
   //return svg.node();
