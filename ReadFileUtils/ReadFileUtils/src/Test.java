@@ -477,9 +477,9 @@ public class Test {
 		String destJsonFilePath2 = "./src/data2.json";
 
 		generalUselessWords.addAll(specificUselessWords);
-		Map<String, List<Integer>> map1 =buildHashMapWords(filePath, 10);
+		Map<String, List<Integer>> map1 =buildHashMapWords(filePath, 10); //5
 		Map<String, List<Integer>> map2 = new ConcurrentHashMap<String, List<Integer>>();
-		resultByNum(map2, map1,getConsumerWord2(map2,map1), 3);
+		resultByNum(map2, map1,getConsumerWord2(map2,map1), 3); //3
 
 		//Map<String, List<Integer>> map3 = new ConcurrentHashMap<String, List<Integer>>();
 		//Map<String, List<Integer>> map4 = new ConcurrentHashMap<String, List<Integer>>();

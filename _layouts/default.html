@@ -147,7 +147,7 @@ rect.cell {
 <script>
 
 var dat
-  d3.json("https://raw.githubusercontent.com/pierreraimbaud/TemasFiestasValleCauca/master/data.json").then(function(data) {
+  d3.json("./data.json").then(function(data) {
           dat = data;
           console.log(dat);
           //Create chart
@@ -157,7 +157,7 @@ var dat
 
       //button to swap to the other dataset
       d3.select("#swToYearButton").on("click",function(){
-        d3.json("https://raw.githubusercontent.com/pierreraimbaud/TemasFiestasValleCauca/master/data2.json").then(function(data) {
+        d3.json("./data2.json").then(function(data) {
           dat = data;
           console.log(dat);
           //Create chart
