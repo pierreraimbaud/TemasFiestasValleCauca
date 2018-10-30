@@ -105,7 +105,7 @@
     <script>
 
       var dat;
-      d3.json("https://raw.githubusercontent.com/pierreraimbaud/TemasFiestasValleCauca/master/data.json").then(function(data) {
+      d3.json("https://raw.githubusercontent.com/pierreraimbaud/TemasFiestasValleCauca/master/data/data.json").then(function(data) {
           dat = data;
           //Create graph
           createGraph(12.648, true, 500,750);
@@ -113,7 +113,7 @@
 
       //button to show to the other dataset
       d3.select("#showDetButton").on("click",function(){
-        d3.json("https://raw.githubusercontent.com/pierreraimbaud/TemasFiestasValleCauca/master/data2.json").then(function(data) {
+        d3.json("https://raw.githubusercontent.com/pierreraimbaud/TemasFiestasValleCauca/master/data/data2.json").then(function(data) {
           dat = data;
           console.log(dat);
           //Create graph
