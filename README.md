@@ -1,4 +1,4 @@
-### Festivities in Valle del Cauca, Colombia : which thematics should I expect for an event? And which are the relationships between them?
+## Festivities in Valle del Cauca, Colombia : which thematics should I expect for an event? And which are the relationships between them?
 
 ### Author
 Pierre Raimbaud : https://github.com/pierreraimbaud, GitHub project link : https://github.com/pierreraimbaud/TemasFiestasValleCauca and Projet page : https://pierreraimbaud.github.io/TemasFiestasValleCauca/<br/><br/>
