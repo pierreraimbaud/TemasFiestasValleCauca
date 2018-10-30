@@ -1,4 +1,9 @@
-<h2>What, why and how ? Understanding this visualization thanks to abstraction</h2>
+### Festivities in Valle del Cauca, Colombia : which thematics should I expect for an event? And which are the relationships between them?
+
+### Author
+Pierre Raimbaud : https://github.com/pierreraimbaud, GitHub project link : https://github.com/pierreraimbaud/TemasFiestasValleCauca and Projet page : https://pierreraimbaud.github.io/TemasFiestasValleCauca/<br/><br/>
+This project is under MIT license (applied to the repository).<br/><br/>
+<img src="/networkThematicsEventsValle.png" alt="TemasFiestasValleCauca"><br/>
 <p style="color:#111111;">
 This visualization uses data from datos.gov.co. The principal objective here is to show or discover some interesting insights about this data, knowing that the principal question here is:<br/><b>Could we know more about the thematics of the festivities in Valle del Cauca, Colombia and their relationships ?</b>
 <br/><br/>
@@ -7,6 +12,7 @@ The other objetives are more academic: to use d3, to represent a network in a vi
 To be more precise, in the following paragraphs first we will explain what were our data (through data abstraction), why this visualization (through task abstraction) and to conclude the reason of how we choice to present the data (idioms : visual encoding and interaction) ; thanks to that, we have been able to answer to the title question : <i>Festivities in Valle del Cauca, Colombia : which thematics should I expect for an event? And which are the relationships between them?</i>. Our answers will be the insights of this visualization!
 <br/>
 </p>
+<h2>What, why and how ? Understanding this visualization thanks to abstraction</h2>
 <p style="color:#789410;font-size:110%">What ?</p>
 <p style="color:#111111;">
 Let's precise first that here two datasets are used. Both have been created from the original dataset thanks to a custom Java program (available in the repository). The two final datasets have the same structure, just the content of the attribute group change. The final dataset type is <b>network</b> (initially, it was a <b>table</b> - originally, almost all the dataset are tables, but, after processing the data for creating new datasets (and new files) we obtained two network datasets. For this case, the dataset was a good cantidate for network dataset because it contains categorical data,  hidden categorical data and hidden relationships between categories.</br>The dataset availability is <b>static</b> because the dataset available on the website is not modified in real-time, so we just download the file from the website and load it on github. So for this case, we had to process the data, so we have done a <b>derivation task</b> to get <b>the derived data</b>.<br/><br/>
