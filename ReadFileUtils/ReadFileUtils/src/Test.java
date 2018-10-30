@@ -30,7 +30,7 @@ public class Test {
 
 	private static List<String> specificUselessWords =new ArrayList<String>(
 			Arrays.asList("valle", "regional","través","corregimiento","marco","todo", "diferentes", "región", "cada", "años", "nacionales","septiembre",
-					"internacional", "espacio", "general","manifestaciones","municipio","fiesta","fiestas","principal","eventos","comunidad",
+					"internacional", "espacio", "general","manifestaciones","municipio","fiesta","fiestas","principal","eventos","comunidad", "muestra","nuestra",
 					"evento","festividad","festival","encuentro","año","celebración","nacional","medio","actividades"));
 
 	@SuppressWarnings("deprecation")
@@ -124,21 +124,44 @@ public class Test {
 					Integer value=1;
 					List<Integer> newL=new ArrayList<Integer>();
 
-
-
-					if (!map.containsKey(splitStr[i].toLowerCase())){
+					splitStr[i]= splitStr[i].toLowerCase();
+					
+					if(splitStr[i].equals("musicales"))
+							splitStr[i]="música";
+					if(splitStr[i].equals("musicos"))
+						splitStr[i]="música";
+					if(splitStr[i].equals("musico"))
+						splitStr[i]="música";
+					if(splitStr[i].equals("cultural"))
+						splitStr[i]="cultura";
+					if(splitStr[i].equals("culturales"))
+						splitStr[i]="cultura";
+					if(splitStr[i].equals("danza"))
+						splitStr[i]="danzas";
+					if(splitStr[i].equals("tradicional"))
+						splitStr[i]="tradicionales";
+					//if(splitStr[i].equals("tradicionales"))
+						//break;
+					if(splitStr[i].equals("artistas"))
+						splitStr[i]="artístico";
+					if(splitStr[i].equals("artista"))
+						splitStr[i]="artístico";
+					if(splitStr[i].equals("santa"))
+						splitStr[i]="san";
+					
+					if (!map.containsKey(splitStr[i])){
 						newL = new ArrayList<Integer>();
 						newL.add(value);
 						newL.add(lineId);
 						map.put(splitStr[i].toLowerCase(), newL);
 					}
 					else {
-						value = map.get(splitStr[i].toLowerCase()).get(0)+1;
-						map.get(splitStr[i].toLowerCase()).set(0,value);
-						if (!map.get(splitStr[i].toLowerCase()).contains(lineId)){
-							map.get(splitStr[i].toLowerCase()).add(lineId);
+						value = map.get(splitStr[i]).get(0)+1;
+						map.get(splitStr[i]).set(0,value);
+						if (!map.get(splitStr[i]).contains(lineId)){
+							map.get(splitStr[i]).add(lineId);
 						}									
-						map.put(splitStr[i].toLowerCase(), map.get(splitStr[i].toLowerCase()));
+						map.put(splitStr[i], map.get(splitStr[i].toLowerCase()));
 					}
 
 
@@ -472,14 +495,14 @@ public class Test {
 
 		String csvPath = "./src/Fest_Cauca.csv";
 		String filePath = "./src/file.txt";
-		String destFilePath = "./src/results.txt";
-		String destJsonFilePath = "./src/data.json";
-		String destJsonFilePath2 = "./src/data2.json";
+		String destFilePath = "../../data/results.txt";
+		String destJsonFilePath = "../../data/data.json";
+		String destJsonFilePath2 = "../../data/data2.json";
 
 		generalUselessWords.addAll(specificUselessWords);
-		Map<String, List<Integer>> map1 =buildHashMapWords(filePath, 10); //5
-		Map<String, List<Integer>> map2 = new ConcurrentHashMap<String, List<Integer>>();
-		resultByNum(map2, map1,getConsumerWord2(map2,map1), 3); //3
+		Map<String, List<Integer>> map1 =buildHashMapWords(filePath, 6); //5
+		//Map<String, List<Integer>> map2 = new ConcurrentHashMap<String, List<Integer>>();
+		//resultByNum(map2, map1,getConsumerWord2(map2,map1), 3); //3
 
 		//Map<String, List<Integer>> map3 = new ConcurrentHashMap<String, List<Integer>>();
 		//Map<String, List<Integer>> map4 = new ConcurrentHashMap<String, List<Integer>>();
