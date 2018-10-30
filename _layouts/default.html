@@ -13,14 +13,15 @@
 
     <style>
       h1 {
-        font-size : 130%;
+        font-size : 140%;
         color:#696969;
         text-align: center;
       }
 
       h2 {
-        font-size : 110%;
+        font-size : 120%;
         color:#489450;
+        text-align: center;
       }
 
       #svgcontainer1 {
@@ -38,29 +39,31 @@
       }
     </style>
     
-    <h1>Title</h1>
+    <h1>Festivities in Valle del Cauca, Colombia : which thematics should I expect for an event? And which are the relationships between them?</h1>
+    <h2>Events and festivals which occur each year in Valle del Cauca</h2>
     <div id="wrapper">
       <div id = "svgcontainer1">
-            <h2>Dataset</h2>
-            <p style="color:#789410;font-size:85%">text for details</p>
-            <div><button id = "showDetButton" style="padding: 5px 10px; text-align: center;font-size: 80%;margin: 2px 1px;">Switch to year</button></div>
+            <p style="color:#789410;font-size:105%"; align="center">In the left, the actual classification given in the original data</p>
+            <div><button id = "showDetButton" style="padding: 5px 10px; text-align: center;font-size: 80%;margin: 2px 1px;">I want to discover the new classification!</button></div>
       </div>
 
-      <div id = "svgcontainer2"></div>
+      <div id = "svgcontainer2">
+        <p id="txtSvgcontainer2" style="color:#789410;font-size:105%;visibility: hidden"; align="center">In the right, the discovered detailed classification, with relationships between thematics</p>
+      </div>
 
        <div id = "explcontainer">
             <h2>What, why and how ? Understanding this visualization thanks to abstraction</h2>
               <p style="color:#111111;">
-                This visualization uses data from datos.gov.co The principal objective here is to show or discover some interesting insights about this data, knowing that the principal question here is:<br/><b>Could I know, thanks to the visualization, when should I book my time for applying to a training about open data ? When not? </b>
+                This visualization uses data from datos.gov.co. The principal objective here is to show or discover some interesting insights about this data, knowing that the principal question here is:<br/><b>Could we know more about the thematics of the festivities in Valle del Cauca, Colombia and their relationships ?</b>
                 <br/><br/>
-                The other objetives are more academic: to use d3, to publish the web page on GithubPages etc. The technologies used are d3 (javascript), HTML, CSS and git (nodejs for developing with a local server). There is no specific prerequisites for enjoying the visualization neither for using the code, available in github.
+                The other objetives are more academic: to use d3, to represent a network in a visualization, to publish the web page on GithubPages etc. The technologies used are d3 (javascript), HTML, CSS, Java (for processing the csv file into a json file) and git (nodejs for developing with a local server). There is no specific prerequisites for enjoying the visualization neither for using the code, available in github.
                 <br/><br/>
-                To be more precise, in the following paragraphs first we will explain what were our data (through data abstraction), why this visualization (through task abstraction) and to conclude the reason of how we choice to present the data (idioms : visual encoding and interaction) ; thanks to that, we have been able to answer to the title question : <i>when should I book my time, when not, for these trainings</i>, which answers are our insights !
+                To be more precise, in the following paragraphs first we will explain what were our data (through data abstraction), why this visualization (through task abstraction) and to conclude the reason of how we choice to present the data (idioms : visual encoding and interaction) ; thanks to that, we have been able to answer to the title question : <i>Festivities in Valle del Cauca, Colombia : which thematics should I expect for an event? And which are the relationships between them?</i>. Our answers will be the insights of this visualization!
                 <br/>
               </p>
               <p style="color:#789410;font-size:110%">What ?</p>
               <p style="color:#111111;">
-                The dataset type is <b>temporal</b> (initially, we could have thought that it was a table, but the fact is that, originally, almost all the dataset are tables, but, seaching with more precision, we can discover interesting details. For this case, the dataset is temporal because it provides a list of open data usage trainings, characterising them by their name, their objectives, their geografic range AND <b>their date</b> (we could admit that some would say - and they would be right - that this dataset could be used for other purposes which don't need the temporal data, and as a result the dataset would not be temporal). </br>The dataset availability is <b>static</b> because the dataset available on the website is not modified in real-time, so we just download the file from the website and load it on github. As the dataset was quite up-to-date (only missing the last weeks), it is probable that the data could evolve in the original website but here we will use a static data file, the one on github. After that, to separate the dataset in smaller ones, and also to get <b>derived data</b> (rate in % of training by month and by year), we process directly this file in the visualization with d3.<br/><br/>
+                Let's precise first that here two datasets are used. Both have been created from the original dataset thanks to a custom Java program (available in the repository).The final dataset type is <b>network</b> (initially, it was a <b>table</b> - originally, almost all the dataset are tables, but, after processing the data for creating new datasets (and new files) we obtained two network datasets. For this case, the dataset was a good cantidate for network dataset because it contains categorical data,  hidden categorical data and hidden relationships between categories.</br>The dataset availability is <b>static</b> because the dataset available on the website is not modified in real-time, so we just download the file from the website and load it on github. So for this case, we had to process the data, so we have done a <b>derivation task</b> to get <b>the derived data</b>.<br/><br/>
 
                 Before processing the data in d3, the <b>items</b> represent each one a training, which have the following characteristics: name, description, audience, date, zone, number of people present and duration. These characteristics are the <b>attributes</b>.<br/><br/>
 
@@ -115,9 +118,10 @@
       d3.select("#showDetButton").on("click",function(){
         d3.json("https://raw.githubusercontent.com/pierreraimbaud/TemasFiestasValleCauca/master/data/data2.json").then(function(data) {
           dat = data;
+          d3.select("#txtSvgcontainer2").style("visibility", "visible")
           console.log(dat);
           //Create graph
-          createGraph(45, false, 750,1000);
+          createGraph(45, false, 730,1000);
         });//end click function
       });
 
@@ -231,9 +235,9 @@
         <p><a href="">Link of this page - for sharing for example</a></p>
       </header>
       <section>
-        <p style="font-size:90%">The data used come from the Colombian open data website - direct link <a href="https://www.datos.gov.co/api/views/nmxb-8juf/rows.csv?accessType=DOWNLOAD&bom=true&format=true">here</a></p>
+        <p style="font-size:90%">The original data used come from the Colombian open data website - direct link <a href="https://www.datos.gov.co/api/views/s236-m86m/rows.csv?accessType=DOWNLOAD">here</a></p>
         <p style="font-size:90%">This project is under <a href="https://opensource.org/licenses/MIT">MIT license.</a></p>
-        <p class="view"><a href="https://github.com/pierreraimbaud/CapacitacionesColombia">Project URL on GitHub <small>pierreraimbaud/CapacitacionesColombia</small></a>   -   <a style="font-size:90%" href="https://github.com/pierreraimbaud/CapacitacionesColombia#markdown">Markdown link</a></p>        
+        <p class="view"><a href="https://github.com/pierreraimbaud/TemasFiestasValleCauca">Project URL on GitHub <small>pierreraimbaud/TemasFiestasValleCauca</small></a>   -   <a style="font-size:90%" href="https://github.com/pierreraimbaud/TemasFiestasValleCauca#markdown">Markdown link</a></p>        
       </section>
       <footer>
         <p>Link to the author GitHub profile: this project is maintained by <a href="https://github.com/pierreraimbaud">pierreraimbaud</a></p>
