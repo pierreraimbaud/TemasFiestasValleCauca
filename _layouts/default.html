@@ -121,8 +121,8 @@
         });//end click function
       });
 
-      function color (nodes,isSvg1){
-        const scale = !isSvg1 ? d3.scaleOrdinal(d3.schemeCategory10) : d3.scaleOrdinal(d3.schemeCategory10);
+      function color (nodes){
+        const scale = d3.scaleOrdinal(d3.schemeCategory10);
         //we want to put a color according to the first group which appears in the list of one node
         //the gol is to allow a better identification of clusters
         return nodes => scale(nodes.group.slice(0, nodes.group.indexOf(' ')));
@@ -189,7 +189,7 @@
             .data(nodes)
             .enter().append("circle")
             .attr("r", d => d.main ==="false" ? 8 : 14)
-            .attr("fill", color(nodes,isSvg1))
+            .attr("fill", color(nodes))
             .call(drag(simulation));
 
         const label = svg.selectAll("label")
